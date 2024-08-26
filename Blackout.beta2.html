@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Blackout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: black;
+            color: white;
+        }
+        h1 {
+            color: red;
+        }
+        h2, h3 {
+            color: white;
+        }
+        .palabra {
+            font-size: 24px;
+            color: green;
+            margin-top: 20px;
+        }
+        .fecha-hora {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        #loginForm {
+            margin-top: 20px;
+        }
+        #bienvenida {
+            display: none;
+            margin-top: 20px;
+        }
+        #errorMensaje {
+            color: red;
+            margin-top: 10px;
+        }
+        #progreso {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        input {
+            width: 80%;
+        }
+        button {
+            background-color: red;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bienvenido a Blackout</h1>
+    <h2></h2>
+
+    <div id="loginForm">
+        <h3>Inicia sesión</h3>
+        <input type="text" id="username" placeholder="Correo electrónico">
+        <button onclick="iniciarSesion()">Iniciar sesión</button>
+        <p id="errorMensaje"></p>
+    </div>
+
+    <div id="bienvenida">
+        <h2 id="saludo"></h2>
+        <div class="fecha-hora" id="fechaHora"></div>
+        <p class="palabra" id="palabraDelDia"></p>
+        <div id="progreso"></div>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+
+    <script>
+        // Obtener la fecha y hora actual en GMT-5 (Bogotá)
+        function obtenerFechaHoraGMT5() {
+            const ahora = new Date();
+            const offsetGMT5 = -5 * 60; // Offset en minutos para GMT-5
+            const fechaHoraGMT5 = new Date(ahora.getTime() + (offsetGMT5 + ahora.getTimezoneOffset()) * 60000);
+            return fechaHoraGMT5;
+        }
+
+        function mostrarFechaHora() {
+            const ahoraGMT5 = obtenerFechaHoraGMT5();
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const fechaTexto = ahoraGMT5.toLocaleDateString('es-ES', opcionesFecha);
+            const horaTexto = ahoraGMT5.toLocaleTimeString('es-ES', opcionesHora);
+            document.getElementById('fechaHora').innerText = `Hoy es ${fechaTexto} y son las ${horaTexto}`;
+        }
+
+        // Mensajes motivacionales
+        const mensajesMotivacionales = [
+            "Elige la libertad, evita la pornografía.",
+            "Valora tu tiempo, valora tu vida.",
+            "La fuerza de voluntad te hace más fuerte.",
+            "Encuentra paz en tu interior, no en la pantalla.",
+            "El verdadero placer está en vivir plenamente.",
+            "La auto-disciplina es el camino al éxito.",
+            "Confía en tu capacidad para superar obstáculos.",
+            "Cultiva relaciones reales, no ilusiones virtuales.",
+            "El crecimiento personal es un viaje constante.",
+            "Desarrolla hábitos saludables y positivos.",
+            "La claridad mental es fruto de una mente libre.",
+            "Enfócate en tus metas y sueños verdaderos.",
+            "Vive en el presente, no en una fantasía digital.",
+            "La autodisciplina es tu mejor aliada.",
+            "Cada día es una oportunidad para mejorar.",
+            "La verdadera felicidad viene de dentro.",
+            "El autocontrol es la clave de la libertad.",
+            "Elige la vida, elige la autenticidad.",
+            "Sé valiente y enfrenta tus desafíos.",
+            "La paz interior vale más que cualquier placer momentáneo."
+        ];
+
+        // Validar el correo electrónico
+        function validarCorreo(email) {
+            const patron = /^[a-z]+[a-z]+[a-z]+@tapsandes\.edu\.co$/;
+            return patron.test(email);
+        }
+
+        function iniciarSesion() {
+            const email = document.getElementById('username').value.trim().toLowerCase();
+            const errorMensaje = document.getElementById('errorMensaje');
+
+            if (validarCorreo(email)) {
+                localStorage.setItem('usuarioActual', email);
+                document.getElementById('saludo').innerText = `Hola, ${email}!`;
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('bienvenida').style.display = 'block';
+                errorMensaje.innerText = '';
+                mostrarMensajeMotivacional();
+            } else {
+                errorMensaje.innerText = 'Inicio de sesión erróneo.';
+            }
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('usuarioActual');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('bienvenida').style.display = 'none';
+            document.getElementById('username').value = '';
+        }
+
+        function verificarSesion() {
+            const usuario = localStorage.getItem('usuarioActual');
+            if (usuario) {
+                document.getElementById('saludo').innerText = `Hola, ${usuario}!`;
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('bienvenida').style.display = 'block';
+                mostrarMensajeMotivacional();
+            } else {
+                document.getElementById('loginForm').style.display = 'block';
+            }
+        }
+
+        // Seleccionar un mensaje motivacional basado en el día del año
+        function mostrarMensajeMotivacional() {
+            const hoy = obtenerFechaHoraGMT5();
+            const diaDelAno = obtenerDiaDelAno(hoy);
+            const mensajeDelDia = mensajesMotivacionales[diaDelAno % mensajesMotivacionales.length];
+            document.getElementById('palabraDelDia').innerText = `Mensaje motivacional de hoy: ${mensajeDelDia}`;
+
+            const usuario = localStorage.getItem('usuarioActual');
+            if (usuario) {
+                let progreso = JSON.parse(localStorage.getItem(`progreso_${usuario}`)) || [];
+                if (!progreso.includes(diaDelAno)) {
+                    progreso.push(diaDelAno);
+                    localStorage.setItem(`progreso_${usuario}`, JSON.stringify(progreso));
+                }
+                document.getElementById('progreso').innerText = `Has visto ${progreso.length} mensajes motivacionales.`;
+            }
+        }
+
+        // Función para obtener el día del año
+        function obtenerDiaDelAno(fecha) {
+            const inicioAno = new Date(fecha.getFullYear(), 0, 0);
+            const diferencia = fecha - inicioAno;
+            const unDia = 1000 * 60 * 60 * 24;
+            return Math.floor(diferencia / unDia);
+        }
+
+        // Actualizar la fecha y hora cada segundo
+        setInterval(mostrarFechaHora, 1000);
+        verificarSesion();
+    </script>
+</body>
+</html>
